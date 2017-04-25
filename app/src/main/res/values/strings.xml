@@ -1,0 +1,22 @@
+<resources>
+
+    <string name="app_name">Treasure Hunt</string>
+    <string name="treasure1">Treasure 1</string>
+    <string name="treasure2">Treasure 2</string>
+    <string name="treasure3">Treasure 3</string>
+    <string name="loading_message">Uploading image..</string>
+    <string name="scanning">Scanning image..</string>
+    <string name="finished_scanning">Finished Scanning</string>
+    <string name="hunt">Hunt</string>
+    <string name="begin_hunt">Begin Hunt</string>
+    <string name="continue_hunt">Continue Hunt</string>
+    <string name="congrats">Congratulations!\nTap to play again.</string>
+    <string name="happy_hunting">Happy Hunting!</string>
+    <string name="instruct">Instructions</string>
+    <string name="new_list">Get New List</string>
+    <string name="new_challenge">New Challenge</string>
+    <string name="won">You found all the treasure!</string>
+    <string name="try_again">Try Again!\nTake another picture.</string>
+    <string name="lose">You were unable to find all the treasure.\nStart a new challenge.</string>
+
+</resources>

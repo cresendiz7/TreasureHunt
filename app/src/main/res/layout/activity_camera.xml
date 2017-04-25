@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.christianresendiz.treasurehunt.CameraActivity">
+
+    <ImageButton
+        android:id="@+id/newList"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="29dp"
+        android:background="@drawable/reload"
+        android:src="@drawable/reload" />
+
+    <TextView
+        android:id="@+id/newChallenge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/newList"
+        android:layout_marginTop="20dp"
+        android:text="@string/new_challenge"
+        android:textAppearance="@android:style/TextAppearance.Material.Title"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/instruct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/instruct"
+        android:textAlignment="center"
+        android:layout_marginBottom="15dp"
+        android:textSize="18sp"
+        android:layout_above="@+id/listFrag"
+        android:layout_centerHorizontal="true" />
+
+    <fragment
+        android:id="@+id/listFrag"
+        android:name="com.christianresendiz.treasurehunt.TreasureListFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
+        tools:layout="@layout/treasure_list_fragment"
+        android:layout_above="@+id/btnCamera" />
+
+    <ImageView
+        android:id="@+id/happy"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@id/btnCamera"
+        android:layout_alignEnd="@id/btnCamera"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/happy"
+        android:visibility="invisible"
+        android:layout_marginBottom="30dp"/>
+
+    <Button
+        android:id="@+id/btnCamera"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="@string/begin_hunt"
+        android:textSize="24sp" />
+
+
+
+</RelativeLayout>
