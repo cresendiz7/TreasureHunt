@@ -6,14 +6,19 @@
     android:layout_height="match_parent"
     tools:context="com.christianresendiz.treasurehunt.CameraActivity">
 
+    <ImageView
+        android:id="@+id/preview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="centerCrop"/>
+
     <ImageButton
         android:id="@+id/newList"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="29dp"
-        android:background="@drawable/reload"
-        android:src="@drawable/reload" />
+        android:background="@drawable/reload" />
 
     <TextView
         android:id="@+id/newChallenge"
@@ -52,9 +57,7 @@
         android:layout_height="80dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/happy"
-        android:visibility="invisible"
-        android:layout_marginBottom="30dp"/>
+        android:layout_marginBottom="18dp"/>
 
     <Button
         android:id="@+id/btnCamera"

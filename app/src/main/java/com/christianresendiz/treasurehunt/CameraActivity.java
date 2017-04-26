@@ -4,6 +4,11 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -59,7 +64,11 @@ public class CameraActivity extends AppCompatActivity {
     TreasureListFragment treasureListFragment;
     TextView instruct;
     TextView challengeTitle;
-    ImageView happyFace;
+    TextView t1;
+    TextView t2;
+    TextView t3;
+    ImageView preview;
+    ImageView emoji;
     ImageButton btnList;
     Button btnCamera;
     String message;
@@ -76,12 +85,17 @@ public class CameraActivity extends AppCompatActivity {
 
         difficulty = getIntent().getIntExtra("difficulty", 0);
         treasureListFragment = (TreasureListFragment) getSupportFragmentManager().findFragmentById(R.id.listFrag);
+        t1 = treasureListFragment.t1;
+        t2 = treasureListFragment.t2;
+        t3 = treasureListFragment.t3;
+
         instruct = (TextView) findViewById(R.id.instruct);
         challengeTitle = (TextView) findViewById(R.id.newChallenge);
         btnCamera = (Button) findViewById(R.id.btnCamera);
         btnList = (ImageButton) findViewById(R.id.newList);
-        happyFace = (ImageView) findViewById(R.id.happy);
+        emoji = (ImageView) findViewById(R.id.happy);
         background = (RelativeLayout) findViewById(R.id.background);
+        preview = (ImageView) findViewById(R.id.preview);
 
         r = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         r.setDuration((long) 500);
@@ -100,6 +114,7 @@ public class CameraActivity extends AppCompatActivity {
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnList.setBackgroundDrawable(getDrawable(R.drawable.camera));
                 challengeTitle.setText(R.string.happy_hunting);
                 btnList.setClickable(false);
                 startCamera();
@@ -108,7 +123,7 @@ public class CameraActivity extends AppCompatActivity {
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                happyFace.setVisibility(View.INVISIBLE);
+                emoji.setImageResource(android.R.color.transparent);
                 challengeTitle.setText(R.string.new_challenge);
                 background.setBackgroundColor(getResources().getColor(R.color.background));
                 tries = 5;
@@ -164,6 +179,25 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
+    }
+
+    private Bitmap darkenBitMap(Bitmap bm) {
+
+        Canvas canvas = new Canvas(bm);
+        Paint p = new Paint(Color.RED);
+        //ColorFilter filter = new LightingColorFilter(0xFFFFFFFF , 0x00222222); // lighten
+        ColorFilter filter = new LightingColorFilter(0xFF7F7F7F, 0x00000000);    // darken
+        p.setColorFilter(filter);
+        canvas.drawBitmap(bm, new Matrix(), p);
+
+        return bm;
+    }
+
     public void uploadImage(Uri uri) {
             try {
                 // scale the image to save on bandwidth
@@ -171,6 +205,9 @@ public class CameraActivity extends AppCompatActivity {
                         scaleBitmapDown(
                                 MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
                                 1200);
+                bitmap = rotateImage(bitmap, 90);
+                bitmap = darkenBitMap(bitmap);
+                preview.setImageBitmap(bitmap);
                 callCloudVision(bitmap);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -266,11 +303,11 @@ public class CameraActivity extends AppCompatActivity {
             }
 
             protected void onPostExecute(String result) {
+                showResults();
                 r2.cancel();
                 btnList.setBackgroundDrawable(getDrawable(R.drawable.checkmark));
                 challengeTitle.setText(R.string.finished_scanning);
                 tries--;
-                showResults();
                 crossOut();
                 if(!checkWin()) {
                     if (tries == 0) {
@@ -278,6 +315,12 @@ public class CameraActivity extends AppCompatActivity {
                         btnCamera.setText("");
                         btnList.setClickable(true);
                         btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
+                        preview.setImageBitmap(null);
+                        background.setBackgroundColor(getResources().getColor(R.color.lose));
+                        t1.setTextColor(getResources().getColor(R.color.white));
+                        t2.setTextColor(getResources().getColor(R.color.white));
+                        t3.setTextColor(getResources().getColor(R.color.white));
+                        emoji.setImageResource(R.drawable.sad);
                         challengeTitle.setText(R.string.new_challenge);
                     } else {
                         btnCamera.setClickable(true);
@@ -309,7 +352,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private String convertResponseToString(BatchAnnotateImagesResponse response) {
-        message = "Found:\n\n";
+        message = "\nFound:\n\n";
         List<EntityAnnotation> labels = response.getResponses().get(0).getLabelAnnotations();
         if (labels != null) {
             for (EntityAnnotation label : labels) {
@@ -317,23 +360,23 @@ public class CameraActivity extends AppCompatActivity {
                 message += label.getDescription().toUpperCase() + "\n";
             }
         } else
-            message = "I found nothing interesting.";
+            message = "\nI found nothing interesting.";
         return message;
     }
 
     public void crossOut(){
-        if(message.contains(treasureListFragment.t1.getText().toString()))
-            treasureListFragment.t1.setPaintFlags(treasureListFragment.t1.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-        if(message.contains(treasureListFragment.t2.getText().toString()))
-            treasureListFragment.t2.setPaintFlags(treasureListFragment.t2.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-        if(message.contains(treasureListFragment.t3.getText().toString()))
-            treasureListFragment.t3.setPaintFlags(treasureListFragment.t3.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        if(message.contains(t1.getText().toString()))
+            t1.setPaintFlags(t1.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        if(message.contains(t2.getText().toString()))
+            t2.setPaintFlags(t2.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        if(message.contains(t3.getText().toString()))
+            t3.setPaintFlags(t3.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
     }
 
     public boolean checkWin(){
-        if (       ((treasureListFragment.t1.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)
-                && ((treasureListFragment.t2.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)
-                && ((treasureListFragment.t3.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)) {
+        if (       ((t1.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)
+                && ((t2.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)
+                && ((t3.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)) {
             tries = 1;
             instruct.setText(R.string.won);
             challengeTitle.setText(R.string.congrats);
@@ -341,22 +384,23 @@ public class CameraActivity extends AppCompatActivity {
             btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
             btnCamera.setText("");
             btnCamera.setClickable(false);
-            happyFace.setVisibility(View.VISIBLE);
+            preview.setImageBitmap(null);
+            emoji.setImageResource(R.drawable.happy);
             background.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            treasureListFragment.t1.setTextColor(getResources().getColor(R.color.white));
-            treasureListFragment.t2.setTextColor(getResources().getColor(R.color.white));
-            treasureListFragment.t3.setTextColor(getResources().getColor(R.color.white));
+            t1.setTextColor(getResources().getColor(R.color.white));
+            t2.setTextColor(getResources().getColor(R.color.white));
+            t3.setTextColor(getResources().getColor(R.color.white));
             return true;
         }
-        else if(   (((treasureListFragment.t1.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) && ((treasureListFragment.t2.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0))
-                || (((treasureListFragment.t1.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) && ((treasureListFragment.t3.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0))
-                || (((treasureListFragment.t2.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) && ((treasureListFragment.t3.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0))) {
+        else if(   (((t1.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) && ((t2.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0))
+                || (((t1.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) && ((t3.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0))
+                || (((t2.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) && ((t3.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0))) {
             instruct.setText("One more treasure!\nRemaining Shots: " + tries + "");
             return false;
         }
-        else if(   ((treasureListFragment.t1.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)
-                || ((treasureListFragment.t2.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)
-                || ((treasureListFragment.t3.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)) {
+        else if(   ((t1.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)
+                || ((t2.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)
+                || ((t3.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)) {
             instruct.setText("Two more treasures!\nRemaining Shots: " + tries + "");
             return false;
 
