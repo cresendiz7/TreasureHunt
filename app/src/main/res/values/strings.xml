@@ -8,6 +8,7 @@
     <string name="scanning">Scanning image..</string>
     <string name="finished_scanning">Finished Scanning</string>
     <string name="hunt">Hunt</string>
+    <string name="instruct_loading">I hope you found something.</string>
     <string name="begin_hunt">Begin Hunt</string>
     <string name="continue_hunt">Continue Hunt</string>
     <string name="congrats">Congratulations!\nTap to play again.</string>
@@ -18,5 +19,9 @@
     <string name="won">You found all the treasure!</string>
     <string name="try_again">Try Again!\nTake another picture.</string>
     <string name="lose">You were unable to find all the treasure.\nStart a new challenge.</string>
+    <string name="easy">Easy</string>
+    <string name="hard">Hard</string>
+    <string name="medium">Medium</string>
+    <string name="select_a_difficulty">Select a difficulty:</string>
 
 </resources>

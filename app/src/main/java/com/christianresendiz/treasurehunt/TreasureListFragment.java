@@ -34,69 +34,81 @@ public class TreasureListFragment extends Fragment {
     }
 
     public static String[] fortunes = {
+
+            //Colors
             "RED",
-            "PINK",
             "BLUE",
-            "ORANGE",
             "PURPLE",
+            "PINK",
+            "ORANGE",
             "YELLOW",
             "GREEN",
             "BLACK",
             "WHITE",
-            "WINDOW",
-            "HOUSE",
-            "DOOR",
+
+            //Body
             "MAN",
             "MALE",
-            "LIGHT",
-            "TREE",
-            "ART",
             "FACE",
-            "WRITING",
-            "WALL",
-            "ROOM",
             "MUSCLE",
             "ARM",
             "HAIR",
             "LEG",
+            "HEAD",
+            "HAND",
+            "EAR",
+            "EYE",
+            "FINGER",
+            "GIRL",
+            "BEAUTY",
+            "NOSE",
+
+            //Surroundings
+            "WINDOW",
+            "HOUSE",
+            "DOOR",
+            "LIGHT",
+            "TREE",
+            "ART",
+            "WRITING",
+            "WALL",
+            "ROOM",
             "DOG",
             "CAT",
-            "MAMMAL",
             "BRAND",
             "CAR",
             "DARKNESS",
             "TECHNOLOGY",
             "PERSONAL COMPUTER",
-            "HEAD",
-            "HAND",
-            "EAR",
             "GLASSES",
             "WOOD",
             "LAPTOP",
-            "GIRL",
-            "BEAUTY",
-            "NOSE",
             "MOBILE PHONE",
             "CHAIR",
     };
 
-    public String getFortune(){
-        return fortunes[rand.nextInt(fortunes.length)];
+    public String getFortune(int dif){
+        if(dif == 1)
+            return fortunes[rand.nextInt(9)];
+        else if(dif ==2)
+            return fortunes[rand.nextInt(24)];
+        else
+            return fortunes[rand.nextInt(fortunes.length)];
     }
 
-    public void checkDup(){
+    public void checkDup(int dif){
         do{
-            t1.setText(getFortune());
-            t2.setText(getFortune());
-            t3.setText(getFortune());
+            t1.setText(getFortune(dif));
+            t2.setText(getFortune(dif));
+            t3.setText(getFortune(dif));
         }
         while(t1.getText().equals(t2.getText()) || t1.getText().equals(t3.getText()) || t2.getText().equals(t3.getText()) || t1.getText().equals(t3.getText()) && t2.getText().equals(t3.getText()));
     }
-    public void getFortunes(){
-        t1.setText(getFortune());
-        t2.setText(getFortune());
-        t3.setText(getFortune());
-        checkDup();
+    public void getFortunes(int dif){
+        t1.setText(getFortune(dif));
+        t2.setText(getFortune(dif));
+        t3.setText(getFortune(dif));
+        checkDup(dif);
     }
 
     public void resetFlags(){

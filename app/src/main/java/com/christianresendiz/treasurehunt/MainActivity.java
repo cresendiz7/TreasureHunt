@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         btnBegin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+                Intent intent = new Intent(MainActivity.this, DifficultyActivity.class);
                 MainActivity.this.startActivity(intent);
             }
         });

@@ -23,8 +23,8 @@ import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -63,21 +63,25 @@ public class CameraActivity extends AppCompatActivity {
     ImageButton btnList;
     Button btnCamera;
     String message;
+    RelativeLayout background;
     int tries = 5;
     RotateAnimation r;
     RotateAnimation r2;
+    int difficulty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        difficulty = getIntent().getIntExtra("difficulty", 0);
         treasureListFragment = (TreasureListFragment) getSupportFragmentManager().findFragmentById(R.id.listFrag);
         instruct = (TextView) findViewById(R.id.instruct);
         challengeTitle = (TextView) findViewById(R.id.newChallenge);
         btnCamera = (Button) findViewById(R.id.btnCamera);
         btnList = (ImageButton) findViewById(R.id.newList);
         happyFace = (ImageView) findViewById(R.id.happy);
+        background = (RelativeLayout) findViewById(R.id.background);
 
         r = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         r.setDuration((long) 500);
@@ -88,9 +92,9 @@ public class CameraActivity extends AppCompatActivity {
         r2.setDuration((long) 500);
         r2.setRepeatCount(Animation.INFINITE);
 
-        treasureListFragment.getFortunes();
+        treasureListFragment.getFortunes(difficulty);
         treasureListFragment.colorText();
-        instruct.setText("Find the treasure below.\nRemaining Shots: " + tries + "");
+        instruct.setText("Find each treasure below\nTap New Challenge for another list\nRemaining Shots: " + tries + "");
         btnCamera.setClickable(true);
 
         btnCamera.setOnClickListener(new View.OnClickListener() {
@@ -104,11 +108,13 @@ public class CameraActivity extends AppCompatActivity {
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                happyFace.setVisibility(View.INVISIBLE);
                 challengeTitle.setText(R.string.new_challenge);
+                background.setBackgroundColor(getResources().getColor(R.color.background));
                 tries = 5;
-                treasureListFragment.getFortunes();
+                treasureListFragment.getFortunes(difficulty);
                 treasureListFragment.colorText();
-                instruct.setText("Find the treasure below.\nRemaining Shots: " + tries + "");
+                instruct.setText("Find each treasure below\nTap New Challenge for another list\nRemaining Shots: " + tries + "");
                 treasureListFragment.resetFlags();
                 btnCamera.setClickable(true);
                 btnCamera.setText(R.string.begin_hunt);
@@ -173,9 +179,10 @@ public class CameraActivity extends AppCompatActivity {
 
     private void callCloudVision(final Bitmap bitmap) throws IOException {
         btnList.startAnimation(r2);
+        instruct.setText(R.string.instruct_loading);
+        btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
         challengeTitle.setText(R.string.scanning);
         btnCamera.setText("");
-        Toast.makeText(CameraActivity.this, R.string.loading_message, Toast.LENGTH_LONG).show();
         btnCamera.setClickable(false);
 
         // Do the real work in an async task, because we need to use the network anyway
@@ -260,6 +267,7 @@ public class CameraActivity extends AppCompatActivity {
 
             protected void onPostExecute(String result) {
                 r2.cancel();
+                btnList.setBackgroundDrawable(getDrawable(R.drawable.checkmark));
                 challengeTitle.setText(R.string.finished_scanning);
                 tries--;
                 showResults();
@@ -269,6 +277,7 @@ public class CameraActivity extends AppCompatActivity {
                         instruct.setText(R.string.lose);
                         btnCamera.setText("");
                         btnList.setClickable(true);
+                        btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
                         challengeTitle.setText(R.string.new_challenge);
                     } else {
                         btnCamera.setClickable(true);
@@ -329,8 +338,14 @@ public class CameraActivity extends AppCompatActivity {
             instruct.setText(R.string.won);
             challengeTitle.setText(R.string.congrats);
             btnList.setClickable(true);
+            btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
             btnCamera.setText("");
             btnCamera.setClickable(false);
+            happyFace.setVisibility(View.VISIBLE);
+            background.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            treasureListFragment.t1.setTextColor(getResources().getColor(R.color.white));
+            treasureListFragment.t2.setTextColor(getResources().getColor(R.color.white));
+            treasureListFragment.t3.setTextColor(getResources().getColor(R.color.white));
             return true;
         }
         else if(   (((treasureListFragment.t1.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) && ((treasureListFragment.t2.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0))
