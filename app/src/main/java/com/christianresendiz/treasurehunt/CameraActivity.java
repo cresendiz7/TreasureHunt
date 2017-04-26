@@ -2,6 +2,9 @@ package com.christianresendiz.treasurehunt;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,6 +16,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +35,8 @@ import android.widget.TextView;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -50,6 +56,7 @@ import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
+import com.google.common.io.BaseEncoding;
 
 public class CameraActivity extends AppCompatActivity {
 
@@ -227,7 +234,33 @@ public class CameraActivity extends AppCompatActivity {
             }
     }
 
-    private void callCloudVision(final Bitmap bitmap) throws IOException {
+    public static String getSignature(@NonNull PackageManager pm, @NonNull String packageName) {
+        try {
+            PackageInfo packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
+            if (packageInfo == null
+                    || packageInfo.signatures == null
+                    || packageInfo.signatures.length == 0
+                    || packageInfo.signatures[0] == null) {
+                return null;
+            }
+            return signatureDigest(packageInfo.signatures[0]);
+        } catch (PackageManager.NameNotFoundException e) {
+            return null;
+        }
+    }
+
+    private static String signatureDigest(Signature sig) {
+        byte[] signature = sig.toByteArray();
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA1");
+            byte[] digest = md.digest(signature);
+            return BaseEncoding.base16().lowerCase().encode(digest);
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+    }
+
+    private void onStartCall(){
         btnList.startAnimation(r2);
         String[] scanningStrings = getResources().getStringArray(R.array.scanning);
         String randString = scanningStrings[rand.nextInt(scanningStrings.length)];
@@ -238,7 +271,40 @@ public class CameraActivity extends AppCompatActivity {
         btnCamera.setText("");
         btnCamera.setClickable(false);
         btnCamera.setLongClickable(false);
+    }
 
+    private void onFinishCall(){
+        showResults();
+        r2.cancel();
+        btnList.setBackgroundDrawable(getDrawable(R.drawable.checkmark));
+        challengeTitle.setText(R.string.finished_scanning);
+        tries--;
+        crossOut();
+        if(!checkWin()) {
+            if (tries == 0) {
+                instruct.setText(R.string.lose);
+                btnCamera.setText("");
+                btnCamera.setLongClickable(false);
+                shots.setText("");
+                btnList.setClickable(true);
+                btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
+                preview.setImageBitmap(null);
+                background.setBackgroundColor(getResources().getColor(R.color.lose));
+                t1.setTextColor(getResources().getColor(R.color.white));
+                t2.setTextColor(getResources().getColor(R.color.white));
+                t3.setTextColor(getResources().getColor(R.color.white));
+                emoji.setImageResource(R.drawable.sad);
+                challengeTitle.setText(R.string.new_challenge);
+            } else {
+                btnCamera.setClickable(true);
+                btnCamera.setLongClickable(true);
+                btnCamera.setText(R.string.continue_hunt);
+            }
+        }
+    }
+
+    private void callCloudVision(final Bitmap bitmap) throws IOException {
+        onStartCall();
         // Do the real work in an async task, because we need to use the network anyway
         new AsyncTask<Object, Void, String>() {
             @Override
@@ -261,7 +327,7 @@ public class CameraActivity extends AppCompatActivity {
                                     String packageName = getPackageName();
                                     visionRequest.getRequestHeaders().set(ANDROID_PACKAGE_HEADER, packageName);
 
-                                    String sig = PackageManagerUtils.getSignature(getPackageManager(), packageName);
+                                    String sig = getSignature(getPackageManager(), packageName);
 
                                     visionRequest.getRequestHeaders().set(ANDROID_CERT_HEADER, sig);
                                 }
@@ -320,33 +386,7 @@ public class CameraActivity extends AppCompatActivity {
             }
 
             protected void onPostExecute(String result) {
-                showResults();
-                r2.cancel();
-                btnList.setBackgroundDrawable(getDrawable(R.drawable.checkmark));
-                challengeTitle.setText(R.string.finished_scanning);
-                tries--;
-                crossOut();
-                if(!checkWin()) {
-                    if (tries == 0) {
-                        instruct.setText(R.string.lose);
-                        btnCamera.setText("");
-                        btnCamera.setLongClickable(false);
-                        shots.setText("");
-                        btnList.setClickable(true);
-                        btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
-                        preview.setImageBitmap(null);
-                        background.setBackgroundColor(getResources().getColor(R.color.lose));
-                        t1.setTextColor(getResources().getColor(R.color.white));
-                        t2.setTextColor(getResources().getColor(R.color.white));
-                        t3.setTextColor(getResources().getColor(R.color.white));
-                        emoji.setImageResource(R.drawable.sad);
-                        challengeTitle.setText(R.string.new_challenge);
-                    } else {
-                        btnCamera.setClickable(true);
-                        btnCamera.setLongClickable(true);
-                        btnCamera.setText(R.string.continue_hunt);
-                    }
-                }
+                onFinishCall();
             }
         }.execute();
     }

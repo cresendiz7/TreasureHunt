@@ -45,16 +45,15 @@ public class TreasureListFragment extends Fragment {
             "GREEN",
             "BLACK",
             "WHITE",
+            "COLOR",
 
             //Body
             "MAN",
-            "MALE",
             "FACE",
             "MUSCLE",
             "ARM",
             "HAIR",
             "LEG",
-            "HEAD",
             "HAND",
             "EAR",
             "EYE",
@@ -62,12 +61,19 @@ public class TreasureListFragment extends Fragment {
             "GIRL",
             "BEAUTY",
             "NOSE",
+            "SKIN",
+            "PERSON",
 
             //Surroundings
             "WINDOW",
+            "TELEVISION",
+            "GADGET",
+            "PLANT",
+            "NATURE",
+            "FLOWER",
             "HOUSE",
             "DOOR",
-            "LIGHT",
+            "KEYBOARD",
             "TREE",
             "ART",
             "WRITING",
@@ -75,11 +81,10 @@ public class TreasureListFragment extends Fragment {
             "ROOM",
             "DOG",
             "CAT",
-            "BRAND",
             "CAR",
             "DARKNESS",
             "TECHNOLOGY",
-            "PERSONAL COMPUTER",
+            "COMPUTER",
             "GLASSES",
             "WOOD",
             "LAPTOP",
@@ -89,9 +94,9 @@ public class TreasureListFragment extends Fragment {
 
     public String getFortune(int dif){
         if(dif == 1)
-            return fortunes[rand.nextInt(9)];
+            return fortunes[rand.nextInt(10)];
         else if(dif ==2)
-            return fortunes[rand.nextInt(24)];
+            return fortunes[rand.nextInt(25)];
         else
             return fortunes[rand.nextInt(fortunes.length)];
     }
