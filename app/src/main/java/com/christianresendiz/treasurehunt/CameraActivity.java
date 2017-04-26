@@ -1,6 +1,5 @@
 package com.christianresendiz.treasurehunt;
 
-import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,7 +13,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +34,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
+
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpTransport;
@@ -58,8 +58,8 @@ public class CameraActivity extends AppCompatActivity {
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
     private static final String TAG = CameraActivity.class.getSimpleName();
-    public static final int CAMERA_PERMISSIONS_REQUEST = 2;
     public static final int CAMERA_IMAGE_REQUEST = 3;
+    private Random rand = new Random();
 
     TreasureListFragment treasureListFragment;
     TextView instruct;
@@ -67,6 +67,8 @@ public class CameraActivity extends AppCompatActivity {
     TextView t1;
     TextView t2;
     TextView t3;
+    TextView shots;
+    TextView resetText;
     ImageView preview;
     ImageView emoji;
     ImageButton btnList;
@@ -89,6 +91,7 @@ public class CameraActivity extends AppCompatActivity {
         t2 = treasureListFragment.t2;
         t3 = treasureListFragment.t3;
 
+        shots = (TextView) findViewById(R.id.shots);
         instruct = (TextView) findViewById(R.id.instruct);
         challengeTitle = (TextView) findViewById(R.id.newChallenge);
         btnCamera = (Button) findViewById(R.id.btnCamera);
@@ -96,6 +99,7 @@ public class CameraActivity extends AppCompatActivity {
         emoji = (ImageView) findViewById(R.id.happy);
         background = (RelativeLayout) findViewById(R.id.background);
         preview = (ImageView) findViewById(R.id.preview);
+        resetText = (TextView) findViewById(R.id.resetText);
 
         r = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         r.setDuration((long) 500);
@@ -108,7 +112,9 @@ public class CameraActivity extends AppCompatActivity {
 
         treasureListFragment.getFortunes(difficulty);
         treasureListFragment.colorText();
-        instruct.setText("Find each treasure below\nTap New Challenge for another list\nRemaining Shots: " + tries + "");
+        instruct.setText(R.string.instructGame);
+        resetText.setText(R.string.reset);
+        shots.setText("Remaining Shots: " + tries + "");
         btnCamera.setClickable(true);
 
         btnCamera.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +123,16 @@ public class CameraActivity extends AppCompatActivity {
                 btnList.setBackgroundDrawable(getDrawable(R.drawable.camera));
                 challengeTitle.setText(R.string.happy_hunting);
                 btnList.setClickable(false);
+                resetText.setText("");
                 startCamera();
+            }
+        });
+
+        btnCamera.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                btnList.performClick();
+                return true;
             }
         });
         btnList.setOnClickListener(new View.OnClickListener() {
@@ -127,9 +142,14 @@ public class CameraActivity extends AppCompatActivity {
                 challengeTitle.setText(R.string.new_challenge);
                 background.setBackgroundColor(getResources().getColor(R.color.background));
                 tries = 5;
+                btnList.setClickable(true);
                 treasureListFragment.getFortunes(difficulty);
                 treasureListFragment.colorText();
-                instruct.setText("Find each treasure below\nTap New Challenge for another list\nRemaining Shots: " + tries + "");
+                resetText.setText(R.string.reset);
+                preview.setImageBitmap(null);
+                btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
+                instruct.setText(R.string.instructGame);
+                shots.setText("Remaining Shots: " + tries + "");
                 treasureListFragment.resetFlags();
                 btnCamera.setClickable(true);
                 btnCamera.setText(R.string.begin_hunt);
@@ -139,16 +159,10 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     public void startCamera(){
-        if (PermissionUtils.requestPermission(
-                this,
-                CAMERA_PERMISSIONS_REQUEST,
-                Manifest.permission.CAMERA)) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             Uri photoUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", getCameraFile());
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivityForResult(intent, CAMERA_IMAGE_REQUEST);
-        }
     }
 
     public File getCameraFile() {
@@ -166,45 +180,44 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case CAMERA_PERMISSIONS_REQUEST:
-                if (PermissionUtils.permissionGranted(requestCode, CAMERA_PERMISSIONS_REQUEST, grantResults)) {
-                    startCamera();
-                }
-                break;
+    private Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension) {
+
+        int originalWidth = bitmap.getWidth();
+        int originalHeight = bitmap.getHeight();
+        int resizedWidth = maxDimension;
+        int resizedHeight = maxDimension;
+
+        if (originalHeight > originalWidth) {
+            resizedHeight = maxDimension;
+            resizedWidth = (int) (resizedHeight * (float) originalWidth / (float) originalHeight);
+        } else if (originalWidth > originalHeight) {
+            resizedWidth = maxDimension;
+            resizedHeight = (int) (resizedWidth * (float) originalHeight / (float) originalWidth);
+        } else if (originalHeight == originalWidth) {
+            resizedHeight = maxDimension;
+            resizedWidth = maxDimension;
         }
+        return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
     }
 
-    public static Bitmap rotateImage(Bitmap source, float angle) {
+    private Bitmap rotateImage(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
-                matrix, true);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
     private Bitmap darkenBitMap(Bitmap bm) {
-
         Canvas canvas = new Canvas(bm);
         Paint p = new Paint(Color.RED);
-        //ColorFilter filter = new LightingColorFilter(0xFFFFFFFF , 0x00222222); // lighten
         ColorFilter filter = new LightingColorFilter(0xFF7F7F7F, 0x00000000);    // darken
         p.setColorFilter(filter);
         canvas.drawBitmap(bm, new Matrix(), p);
-
         return bm;
     }
 
     public void uploadImage(Uri uri) {
             try {
-                // scale the image to save on bandwidth
-                Bitmap bitmap =
-                        scaleBitmapDown(
-                                MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
-                                1200);
+                Bitmap bitmap = scaleBitmapDown(MediaStore.Images.Media.getBitmap(getContentResolver(), uri), 1200);
                 bitmap = rotateImage(bitmap, 90);
                 bitmap = darkenBitMap(bitmap);
                 preview.setImageBitmap(bitmap);
@@ -216,11 +229,15 @@ public class CameraActivity extends AppCompatActivity {
 
     private void callCloudVision(final Bitmap bitmap) throws IOException {
         btnList.startAnimation(r2);
-        instruct.setText(R.string.instruct_loading);
+        String[] scanningStrings = getResources().getStringArray(R.array.scanning);
+        String randString = scanningStrings[rand.nextInt(scanningStrings.length)];
+        instruct.setText(randString);
+        shots.setText("");
         btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
         challengeTitle.setText(R.string.scanning);
         btnCamera.setText("");
         btnCamera.setClickable(false);
+        btnCamera.setLongClickable(false);
 
         // Do the real work in an async task, because we need to use the network anyway
         new AsyncTask<Object, Void, String>() {
@@ -305,6 +322,7 @@ public class CameraActivity extends AppCompatActivity {
             protected void onPostExecute(String result) {
                 showResults();
                 r2.cancel();
+                btnCamera.setLongClickable(true);
                 btnList.setBackgroundDrawable(getDrawable(R.drawable.checkmark));
                 challengeTitle.setText(R.string.finished_scanning);
                 tries--;
@@ -313,6 +331,7 @@ public class CameraActivity extends AppCompatActivity {
                     if (tries == 0) {
                         instruct.setText(R.string.lose);
                         btnCamera.setText("");
+                        shots.setText("Remaining Shots: " + tries + "");
                         btnList.setClickable(true);
                         btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
                         preview.setImageBitmap(null);
@@ -331,26 +350,6 @@ public class CameraActivity extends AppCompatActivity {
         }.execute();
     }
 
-    public Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension) {
-
-        int originalWidth = bitmap.getWidth();
-        int originalHeight = bitmap.getHeight();
-        int resizedWidth = maxDimension;
-        int resizedHeight = maxDimension;
-
-        if (originalHeight > originalWidth) {
-            resizedHeight = maxDimension;
-            resizedWidth = (int) (resizedHeight * (float) originalWidth / (float) originalHeight);
-        } else if (originalWidth > originalHeight) {
-            resizedWidth = maxDimension;
-            resizedHeight = (int) (resizedWidth * (float) originalHeight / (float) originalWidth);
-        } else if (originalHeight == originalWidth) {
-            resizedHeight = maxDimension;
-            resizedWidth = maxDimension;
-        }
-        return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
-    }
-
     private String convertResponseToString(BatchAnnotateImagesResponse response) {
         message = "\nFound:\n\n";
         List<EntityAnnotation> labels = response.getResponses().get(0).getLabelAnnotations();
@@ -360,7 +359,7 @@ public class CameraActivity extends AppCompatActivity {
                 message += label.getDescription().toUpperCase() + "\n";
             }
         } else
-            message = "\nI found nothing interesting.";
+            message = "\nAbsolutely nothing.";
         return message;
     }
 
@@ -380,6 +379,7 @@ public class CameraActivity extends AppCompatActivity {
             tries = 1;
             instruct.setText(R.string.won);
             challengeTitle.setText(R.string.congrats);
+            shots.setText("");
             btnList.setClickable(true);
             btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
             btnCamera.setText("");
@@ -395,18 +395,21 @@ public class CameraActivity extends AppCompatActivity {
         else if(   (((t1.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) && ((t2.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0))
                 || (((t1.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) && ((t3.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0))
                 || (((t2.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) && ((t3.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0))) {
-            instruct.setText("One more treasure!\nRemaining Shots: " + tries + "");
+            instruct.setText(R.string.oneMore);
+            shots.setText("Remaining Shots: " + tries + "");
             return false;
         }
         else if(   ((t1.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)
                 || ((t2.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)
                 || ((t3.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0)) {
-            instruct.setText("Two more treasures!\nRemaining Shots: " + tries + "");
+            instruct.setText(R.string.twoMore);
+            shots.setText("Remaining Shots: " + tries + "");
             return false;
 
         }
         else {
-            instruct.setText("No luck. Try harder!\nRemaining Shots: " + tries + "");
+            instruct.setText(R.string.try_again);
+            shots.setText("Remaining Shots: " + tries + "");
             return false;
 
         }

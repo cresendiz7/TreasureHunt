@@ -37,9 +37,9 @@
         android:layout_height="wrap_content"
         android:text="@string/instruct"
         android:textAlignment="center"
-        android:layout_marginBottom="15dp"
+        android:layout_marginTop="50dp"
         android:textSize="18sp"
-        android:layout_above="@+id/listFrag"
+        android:layout_below="@id/newChallenge"
         android:layout_centerHorizontal="true" />
 
     <fragment
@@ -48,6 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="250dp"
         android:layout_centerHorizontal="true"
+        android:layout_below="@id/instruct"
         tools:layout="@layout/treasure_list_fragment"
         android:layout_above="@+id/btnCamera" />
 
@@ -59,6 +60,15 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="18dp"/>
 
+    <TextView
+        android:id="@+id/resetText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/instruct"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="75dp"
+        android:textColor="@color/colorAccent"/>
     <Button
         android:id="@+id/btnCamera"
         style="@style/Widget.AppCompat.Button.Borderless"
@@ -69,6 +79,17 @@
         android:layout_marginBottom="30dp"
         android:text="@string/begin_hunt"
         android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/shots"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/instruct"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"
+        android:layout_alignParentBottom="true"/>
 
 
 
