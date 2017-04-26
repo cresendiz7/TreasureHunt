@@ -322,7 +322,6 @@ public class CameraActivity extends AppCompatActivity {
             protected void onPostExecute(String result) {
                 showResults();
                 r2.cancel();
-                btnCamera.setLongClickable(true);
                 btnList.setBackgroundDrawable(getDrawable(R.drawable.checkmark));
                 challengeTitle.setText(R.string.finished_scanning);
                 tries--;
@@ -331,7 +330,8 @@ public class CameraActivity extends AppCompatActivity {
                     if (tries == 0) {
                         instruct.setText(R.string.lose);
                         btnCamera.setText("");
-                        shots.setText("Remaining Shots: " + tries + "");
+                        btnCamera.setLongClickable(false);
+                        shots.setText("");
                         btnList.setClickable(true);
                         btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
                         preview.setImageBitmap(null);
@@ -343,6 +343,7 @@ public class CameraActivity extends AppCompatActivity {
                         challengeTitle.setText(R.string.new_challenge);
                     } else {
                         btnCamera.setClickable(true);
+                        btnCamera.setLongClickable(true);
                         btnCamera.setText(R.string.continue_hunt);
                     }
                 }
@@ -383,7 +384,6 @@ public class CameraActivity extends AppCompatActivity {
             btnList.setClickable(true);
             btnList.setBackgroundDrawable(getDrawable(R.drawable.reload));
             btnCamera.setText("");
-            btnCamera.setClickable(false);
             preview.setImageBitmap(null);
             emoji.setImageResource(R.drawable.happy);
             background.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
