@@ -45,7 +45,7 @@ public class TreasureListFragment extends Fragment {
             "GREEN",
             "BLACK",
             "WHITE",
-            "COLOR",
+            "ART",
 
             //Body
             "MAN",
@@ -75,7 +75,7 @@ public class TreasureListFragment extends Fragment {
             "DOOR",
             "KEYBOARD",
             "TREE",
-            "ART",
+            "BIRD",
             "WRITING",
             "WALL",
             "ROOM",
