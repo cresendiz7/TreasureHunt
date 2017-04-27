@@ -24,9 +24,19 @@
         android:layout_height="60dp"
         android:textSize="20sp"
         android:layout_below="@id/difficultyTitle"
-        android:layout_centerHorizontal="true"
+        android:layout_alignStart="@id/difficultyTitle"
         android:layout_marginTop="60dp"
+        android:layout_marginEnd="10dp"
         android:text="@string/easy" />
+
+    <ImageView
+        android:id="@+id/color1"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/color_mixture"
+        android:layout_toEndOf="@id/easyBtn"
+        android:layout_alignTop="@id/easyBtn"
+        android:layout_alignBottom="@id/easyBtn"/>
 
     <Button
         android:id="@+id/mediumBtn"
@@ -34,10 +44,41 @@
         android:layout_width="110dp"
         android:layout_height="60dp"
         android:textSize="20sp"
-        android:layout_centerHorizontal="true"
+        android:layout_alignStart="@id/difficultyTitle"
         android:layout_below="@id/easyBtn"
         android:layout_marginTop="50dp"
         android:text="@string/medium" />
+
+    <ImageView
+        android:id="@+id/color2"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/color_mixture"
+        android:layout_toEndOf="@id/mediumBtn"
+        android:layout_alignTop="@id/mediumBtn"
+        android:layout_alignBottom="@id/mediumBtn"
+        android:layout_marginEnd="10dp"/>
+
+    <TextView
+        android:id="@+id/plus1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/color2"
+        android:text="@string/plus"
+        android:layout_alignTop="@id/mediumBtn"
+        android:layout_alignBottom="@id/mediumBtn"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:layout_marginEnd="10dp"/>
+
+    <ImageView
+        android:id="@+id/body1"
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/body"
+        android:layout_toEndOf="@id/plus1"
+        android:layout_alignTop="@id/mediumBtn"
+        android:layout_alignBottom="@id/mediumBtn"/>
 
     <Button
         android:id="@+id/hardBtn"
@@ -45,8 +86,62 @@
         android:layout_width="100dp"
         android:layout_height="60dp"
         android:textSize="20sp"
-        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="10dp"
+        android:layout_alignStart="@id/difficultyTitle"
         android:layout_below="@+id/mediumBtn"
         android:layout_marginTop="50dp"
         android:text="@string/hard" />
+
+    <ImageView
+        android:id="@+id/color3"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/color_mixture"
+        android:layout_toEndOf="@id/hardBtn"
+        android:layout_alignTop="@id/hardBtn"
+        android:layout_alignBottom="@id/hardBtn"
+        android:layout_marginEnd="10dp"/>
+
+    <TextView
+        android:id="@+id/plus2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/color2"
+        android:text="@string/plus"
+        android:layout_alignTop="@id/hardBtn"
+        android:layout_alignBottom="@id/hardBtn"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:layout_marginEnd="10dp"/>
+
+    <ImageView
+        android:id="@+id/body2"
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/body"
+        android:layout_toEndOf="@id/plus2"
+        android:layout_alignTop="@id/hardBtn"
+        android:layout_alignBottom="@id/hardBtn"
+        android:layout_marginEnd="10dp"/>
+
+    <TextView
+        android:id="@+id/plus3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/body2"
+        android:text="@string/plus"
+        android:layout_alignTop="@id/hardBtn"
+        android:layout_alignBottom="@id/hardBtn"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:layout_marginEnd="10dp"/>
+
+    <ImageView
+        android:id="@+id/laptop1"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/laptop"
+        android:layout_toEndOf="@id/plus3"
+        android:layout_alignTop="@id/hardBtn"
+        android:layout_alignBottom="@id/hardBtn"/>
 </RelativeLayout>

@@ -45,8 +45,8 @@
     <fragment
         android:id="@+id/listFrag"
         android:name="com.christianresendiz.treasurehunt.TreasureListFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="250dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/instruct"
         tools:layout="@layout/treasure_list_fragment"

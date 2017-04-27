@@ -11,6 +11,7 @@
     <string name="oneMore">One more treasure!</string>
     <string name="twoMore">Two more treasures!</string>
     <string name="reset">Long press at any time to give up</string>
+    <string name="plus">+</string>
 
 
     <string-array name="scanning">

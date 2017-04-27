@@ -45,7 +45,7 @@ public class TreasureListFragment extends Fragment {
             "GREEN",
             "BLACK",
             "WHITE",
-            "ART",
+            "BROWN",
 
             //Body
             "MAN",
@@ -142,6 +142,8 @@ public class TreasureListFragment extends Fragment {
             t1.setTextColor(getResources().getColor(R.color.black));
         else if(t1.getText().equals("WHITE"))
             t1.setTextColor(getResources().getColor(R.color.white));
+        else if(t1.getText().equals("BROWN"))
+            t1.setTextColor(getResources().getColor(R.color.brown));
         else{
             int r1 = rand.nextInt(155) + 100;
             int g1 = rand.nextInt(155) + 100;
@@ -169,6 +171,8 @@ public class TreasureListFragment extends Fragment {
             t2.setTextColor(getResources().getColor(R.color.black));
         else if(t2.getText().equals("WHITE"))
             t2.setTextColor(getResources().getColor(R.color.white));
+        else if(t2.getText().equals("BROWN"))
+            t2.setTextColor(getResources().getColor(R.color.brown));
         else{
             int r2 = rand.nextInt(155) + 100;
             int g2 = rand.nextInt(155) + 100;
@@ -196,6 +200,8 @@ public class TreasureListFragment extends Fragment {
             t3.setTextColor(getResources().getColor(R.color.black));
         else if(t3.getText().equals("WHITE"))
             t3.setTextColor(getResources().getColor(R.color.white));
+        else if(t3.getText().equals("BROWN"))
+            t3.setTextColor(getResources().getColor(R.color.brown));
         else{
             int r3 = rand.nextInt(155) + 100;
             int g3 = rand.nextInt(155) + 100;
