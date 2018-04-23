@@ -12,12 +12,22 @@
         android:layout_height="fill_parent"
         android:scaleType="centerCrop"/>
 
+    <TextView
+        android:id="@+id/difficulty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:textSize="36sp"
+        android:text="@string/difficulty" />
+
     <ImageButton
         android:id="@+id/newList"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="100dp"
         android:background="@drawable/reload" />
 
     <TextView
@@ -90,7 +100,5 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
         android:layout_alignParentBottom="true"/>
-
-
 
 </RelativeLayout>

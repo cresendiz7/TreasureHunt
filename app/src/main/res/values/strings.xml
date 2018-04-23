@@ -19,6 +19,9 @@
         <item>I might not see anything.</item>
         <item>I don\'t always tell the truth.</item>
         <item>My eyes aren\'t what they used to be..</item>
+        <item>I hope I don\'t blink and miss the treasure.</item>
+        <item>I can almost see something..</item>
+        <item>Is that what I think it is?</item>
     </string-array>
 
     <string name="begin_hunt">Begin Hunt</string>
@@ -29,11 +32,22 @@
     <string name="new_list">Get New List</string>
     <string name="new_challenge">New Challenge</string>
     <string name="won">You found all the treasure!</string>
-    <string name="try_again">Try Again!\nI didn\'t see anything from your list.</string>
+
+    <string-array name="try_again">
+        <item>Try Again!\nI didn\'t see anything from your list.</item>
+        <item>Try Again!\nI accidentally blinked.</item>
+        <item>Try Again!\nA bug flew in my eyes.</item>
+        <item>Try Again!\nI promise I didn\'t see anything.</item>
+        <item>Try Again!\nMaybe treasure hunting isn\'t for you.</item>
+    </string-array>
+
     <string name="lose">You were unable to find all the treasure.\nStart a new challenge.</string>
-    <string name="easy">Easy</string>
-    <string name="hard">Hard</string>
-    <string name="medium">Medium</string>
+    <string name="easy">EASY</string>
+    <string name="hard">HARD</string>
+    <string name="medium">MEDIUM</string>
     <string name="select_a_difficulty">Select a difficulty:</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="you_lose">You Lose!</string>
+    <string name="you_win">You Win!</string>
 
 </resources>
